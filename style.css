@@ -1,0 +1,40 @@
+#game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0;
+    font-family: var(--font-mono);
+}
+
+#canvas {
+    image-rendering: pixelated;
+    border: 4px solid #8B6914;
+    cursor: default;
+}
+
+#ui {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+}
+
+#msg {
+    font-size: 15px;
+    font-weight: 500;
+    min-height: 24px;
+    color: var(--color-text-primary);
+    margin-top: 4px;
+}
+
+button {
+    padding: 6px 14px;
+    font-size: 13px;
+}
+
+#level-select {
+    font-size: 13px;
+    padding: 4px 8px;
+}
