@@ -4,8 +4,9 @@ const ROWS = 18;
 
 const E = 0;
 const B = 1;
-const H = 2;
+const T = 2;
 const S = 3;
+const P = 4;
 
 const COLORS = {
     bg: '#000000',
@@ -17,6 +18,7 @@ const COLORS = {
     trailDark: '#1e3a0f',
     playerColors: ['#9aff5f', '#ffcc00', '#ff6a00', '#ff2512'],
     playerEye: '#ffffff',
+    packColor: '#f7dfa7',
     heart: '#cc3333',
     start: '#8B6914',
     empty: '#000000',
@@ -29,14 +31,14 @@ const LEVELS = [
             [B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B],
             [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, B],
             [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, B],
-            [B, E, E, E, E, E, E, E, E, E, E, E, B, B, B, E, H, B],
+            [B, E, E, E, E, E, E, E, E, E, E, E, B, B, B, E, T, B],
             [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, B, B],
             [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, B],
             [B, E, E, E, E, E, E, E, E, E, B, B, B, B, E, E, E, B],
             [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, B],
-            [B, E, E, B, B, B, B, E, E, E, E, E, E, E, E, E, E, B],
-            [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, B],
-            [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, B],
+            [B, E, E, B, B, B, B, E, E, E, P, E, E, E, E, E, E, B],
+            [B, E, E, E, E, E, E, E, E, E, P, E, E, E, E, E, E, B],
+            [B, E, E, E, E, E, P, E, E, E, P, E, E, E, E, E, E, B],
             [B, E, B, B, B, B, B, B, B, B, B, E, E, E, E, E, E, B],
             [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, B],
             [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, B],
@@ -50,7 +52,7 @@ const LEVELS = [
         start: [1, 14],
         map: [
             [B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B],
-            [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, H, B],
+            [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, T, B],
             [B, B, E, E, E, E, E, E, E, E, E, E, E, E, E, B, B, B],
             [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, B],
             [B, E, B, B, B, B, E, E, E, E, E, B, B, B, B, E, E, B],
@@ -74,7 +76,7 @@ const LEVELS = [
         map: [
             [B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B],
             [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, B],
-            [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, H, B],
+            [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, T, B],
             [B, E, E, E, E, E, E, E, E, E, E, E, E, E, B, B, B, B],
             [B, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, B],
             [B, E, E, E, E, E, E, E, E, E, E, B, B, E, E, E, E, B],
@@ -122,6 +124,16 @@ function isSolid(x, y) {
     return (map[y][x] === B || map[y][x] === S) || (trail.has(`${x},${y},h`) || trail.has(`${x},${y},v`));
 }
 
+function isPack(x, y) {
+    if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
+    return map[y][x] === P;
+}
+
+function isSolidOrPack(x, y) {
+    if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return true;
+    return (map[y][x] === B || map[y][x] === S || map[y][x] === P) || (trail.has(`${x},${y},h`) || trail.has(`${x},${y},v`));
+}
+
 function returnPlayerJumpLevel(x, y) {
     let count = -1;
     let foundFloorOrHorizontalTrail = false;
@@ -129,7 +141,7 @@ function returnPlayerJumpLevel(x, y) {
     while (foundFloorOrHorizontalTrail === false) {
         y = y + 1;
 
-        if ((map[y][x] === B || map[y][x] === S) || trail.has(`${x},${y},h`)) {
+        if ((map[y][x] === B || map[y][x] === S || map[y][x] === P) || trail.has(`${x},${y},h`)) {
             foundFloorOrHorizontalTrail = true;
         }
 
@@ -140,7 +152,7 @@ function returnPlayerJumpLevel(x, y) {
 }
 
 function hasFloorBelow(x, y) {
-    return isSolid(x, y + 1);
+    return isSolid(x, y + 1) || isPack(x, y + 1);
 }
 
 function getCell(x, y) {
@@ -150,24 +162,46 @@ function getCell(x, y) {
 
 function movePlayer(dx, dy) {
     if (gameOver || won) return;
-    const px = player.x, py = player.y;
+    
+    let px = player.x, py = player.y;
     const nx = px + dx;
+    const ny = py + dy;
     const nextPlayerJumpLevel = returnPlayerJumpLevel(px, player.y + dy)
     console.log("nextPlayerJumpLevel: " + nextPlayerJumpLevel);
 
     if (dy === -1) {
-        if (nextPlayerJumpLevel <= 3 && !isSolid(nx, player.y + dy)) {
+        if (nextPlayerJumpLevel <= 3 && !isSolid(nx, ny) && !isPack(nx, ny)) {
             // console.log(`posicao do player x:${player.x}, y:${player.y}`);
             playerJumpLevel = nextPlayerJumpLevel
             trail.add(`${player.x},${player.y},v`);
-            player.y = player.y + dy;
+            player.y = ny;
         }
     } else {
-        if (!isSolid(nx, py)) {
+        if (isPack(nx, py)) {
+            console.log(`is pack ${nx} e ${py}`);
+            movePack(nx, py, dx);
+        } 
+
+        if (!isSolid(nx, py) && !isPack(nx, py)) {
             player.x = nx;
             trail.add(`${px},${player.y},h`);
-            applyGravity();
+
+            // Aplicar gravidade no jogador
+            while (!hasFloorBelow(player.x, player.y)) {
+                trail.add(`${player.x},${player.y},v`);
+                player.y++;
+                if (player.y >= ROWS) break;
+            }
+
+            playerJumpLevel = returnPlayerJumpLevel(player.x, player.y)
         }
+    }
+
+    px = player.x; 
+    py = player.y;
+
+    if (isSolidOrPack(px+1, py) && isSolidOrPack(px-1, py) && isSolidOrPack(px, py-1)) {
+        playerJumpLevel = 3;
     }
 
     console.log("currentPlayerJumpLevel: " + playerJumpLevel);
@@ -176,18 +210,25 @@ function movePlayer(dx, dy) {
     return;
 }
 
-function applyGravity() {
-    while (!hasFloorBelow(player.x, player.y)) {
-        trail.add(`${player.x},${player.y},v`);
-        player.y++;
-        if (player.y >= ROWS) break;
+function movePack(x, y, direction) {
+    nx = x + direction;
+
+    if (!isPack(x, y) || isPack(nx, y) || isSolid(nx, y)) return;
+
+    map[y][x] = E;
+    map[y][nx] = P;
+
+    // Aplicar gravidade na caixa movida
+    while (!hasFloorBelow(nx, y)) {
+        map[y][nx] = E;
+        y = y + 1;
+        map[y][nx] = P;
     }
-    playerJumpLevel = returnPlayerJumpLevel(player.x, player.y)
 }
 
 function checkWin() {
     const cell = getCell(player.x, player.y);
-    if (cell === H) {
+    if (cell === T) {
         won = true;
         msgEl.textContent = 'Você chegou ao coração! Parabéns!';
     }
@@ -199,7 +240,9 @@ function gameLoop() {
 }
 
 function drawBlock(x, y, color, darkColor) {
-    const px = x * TILE, py = y * TILE;
+    const px = x * TILE;
+    const py = y * TILE;
+    
     ctx.fillStyle = color;
     ctx.fillRect(px, py, TILE, TILE);
     ctx.fillStyle = darkColor;
@@ -215,7 +258,7 @@ function drawBlock(x, y, color, darkColor) {
     }
 }
 
-function drawHeart(cx, cy, size) {
+function drawTarget(cx, cy, size) {
     ctx.save();
     ctx.fillStyle = COLORS.heart;
     ctx.beginPath();
@@ -244,6 +287,25 @@ function drawPlayer(px, py) {
     ctx.fillRect(x + 16, y + 16, 4, 5);
 }
 
+function drawPack(x, y) {
+    const px = x * TILE;
+    const py = y * TILE;
+    
+    ctx.fillStyle = COLORS.packColor;
+    ctx.fillRect(px, py, TILE, TILE);
+    ctx.fillStyle = COLORS.packColor;
+    ctx.fillRect(px, py + TILE - 3, TILE, 3);
+    ctx.fillRect(px + TILE - 3, py, 3, TILE);
+    ctx.strokeStyle = COLORS.darkColor;
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 2; j++) {
+            const bx = px + i * 10, by = py + j * 15;
+            ctx.strokeRect(bx + 1, by + 1, 8, 13);
+        }
+    }
+}
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = COLORS.bg;
@@ -261,10 +323,12 @@ function draw() {
                 drawBlock(col, row, '#7a5810', '#5a3f08');
             } else if (isTrail) {
                 drawBlock(col, row, COLORS.trail, COLORS.trailDark);
-            } else if (cell === H) {
+            } else if (cell === T) {
                 const hx = px + TILE / 2;
                 const hy = py + 4;
-                drawHeart(hx, hy, 8);
+                drawTarget(hx, hy, 8);
+            } else if (cell === P) {
+                drawPack(col, row);
             }
         }
     }
