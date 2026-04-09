@@ -4,26 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lime Trail Game</title>
+    <title>Slime Trail Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div id="game-container">
-        <h2 class="sr-only">Lime Trail Game - Inspired by Lime Rick (2013)</h2>
-        <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px;">
-            <label style="font-size:13px;color:var(--color-text-secondary);">Fase:</label>
-            <select id="level-select">
-                <option value="0">Fase 1</option>
-                <option value="1">Fase 2</option>
-                <option value="2">Fase 3</option>
-            </select>
-            <button id="restart-btn">Reiniciar</button>
-        </div>
-        <canvas id="canvas" width="540" height="540"></canvas>
-        <div id="msg"></div>
+        <h1 class="sr-only">Slime Trail Game - Inspired by Lime Rick (2013)</h2>
+        <div id="game-level-selector"></div>
+        <canvas id="canvas"></canvas>
         <div id="ui">
-            <span>Setas: mover | ↑: pular (max 3 blocos)</span>
+            <span>Reach the Apple | WASD to move | R to restart</span>
         </div>
     </div>
 </body>
